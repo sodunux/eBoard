@@ -26,8 +26,6 @@ void SC_Close(USART_TypeDef* USARTn)
   SC_ResetCmd(USARTn,Bit_RESET);
   SC_ClkCmd(USARTn,DISABLE);
   SC_PowerCmd(USARTn,Bit_RESET);
-  
-
 }
 
 /*******************************************************************************
@@ -366,6 +364,30 @@ else if(USARTn==USART3)
   }  
 }
 
+
+void SC_ClearBuf(USART_TypeDef *USARTn)
+{
+	u8 i;
+		if(USARTn==USART1)
+		{
+			for(i=0;i<128;i++)
+				uartbuff_1[i] = 0x00;
+				//uart_rx_cnt_1 = 0x00;
+		}
+		else if(USARTn==USART2)
+		{
+			for(i=0;i<128;i++)
+				uartbuff_2[i] = 0x00;
+			//uart_rx_cnt_2 = 0x00;
+		}
+		else
+		{
+			for(i=0;i<128;i++)
+				uartbuff_3[i] =0x00;
+			//uart_rx_cnt_3 = 0x00;
+		}
+}
+
 /*******************************************************************************
 * Function Name  : SC_ColdReset
 * Description    : Operate a ColdRest action.
@@ -378,52 +400,56 @@ else if(USARTn==USART3)
 *******************************************************************************/
 
 void SC_ColdReset(USART_TypeDef *USARTn){
-		//SC_Init(USARTn);
+		SC_ClearBuf(USARTn);
 		SC_Close(USARTn);
-		SC_Delay(1000);
 		SC_PowerCmd(USARTn,Bit_SET);
 		SC_ClkCmd(USARTn,ENABLE);
 		SC_Delay(2000);
     SC_ResetCmd(USARTn,Bit_SET);
+		//SC_Delay(1000);	
     if(USARTn==USART1)  
-      SC_Transmit(USARTn,uartbuff_1,0,0x10);
+      SC_Transmit(USARTn,uartbuff_1,0,0x01);
     else if(USARTn==USART2)
-      SC_Transmit(USARTn,uartbuff_2,0,0x10);
+      SC_Transmit(USARTn,uartbuff_2,0,0x01);
     else 
-      SC_Transmit(USARTn,uartbuff_3,0,0x10);
+      SC_Transmit(USARTn,uartbuff_3,0,0x01);
 }
+
 
 void SC_Transmit(USART_TypeDef *USARTn,u8 *buff,u8 txlen,u8 rxlen)
 {
   u8 i;
+	USART_DMACmd(USARTn,USART_DMAReq_Rx,DISABLE);
   for(i=0;i<txlen;i++)
   {
     SC_ByteSend(USARTn,buff[i]);
   }
-
+	SC_Delay(1000);
+	
   (void)USART_GetFlagStatus(USARTn,USART_FLAG_RXNE);//Clear USART_SR ORE NE FE PE
   (void)USART_ReceiveData(USARTn);//Clear DR
   USART_ClearFlag(USARTn,USART_FLAG_ORE|USART_FLAG_TC|USART_FLAG_FE|USART_FLAG_PE);
   if(USARTn==USART1)
   {
     DMA_ClearFlag(DMA1_FLAG_TC5|DMA1_FLAG_GL5|DMA1_FLAG_HT5|DMA1_FLAG_TE5);
-		SC_Delay(1000);
+		//SC_Delay(1000);
     DMA_Uart1_Rx_Config(buff,rxlen);
     //OSSemPend(uart_receive_1, 0, &err);
   }    
   else if(USARTn==USART2)
   {
     DMA_ClearFlag(DMA1_FLAG_TC6|DMA1_FLAG_GL6|DMA1_FLAG_HT6|DMA1_FLAG_TE6);
-		SC_Delay(1000);
+		//SC_Delay(1000);
     DMA_Uart2_Rx_Config(buff,rxlen);
     //OSSemPend(uart_receive_2, 0, &err);
   }
   else {
     DMA_ClearFlag(DMA1_FLAG_TC3|DMA1_FLAG_GL3|DMA1_FLAG_HT3|DMA1_FLAG_TE3);
-		SC_Delay(1000);
+		//SC_Delay(1000);
     DMA_Uart3_Rx_Config(buff,rxlen);
     //OSSemPend(uart_receive_3, 0, &err);
   }
+	SC_ClearBuf(USARTn);
   USART_DMACmd(USARTn,USART_DMAReq_Rx,ENABLE);
 }
 

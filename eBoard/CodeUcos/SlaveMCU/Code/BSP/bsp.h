@@ -88,17 +88,17 @@
 /* LED Pins*/
 #define RED1_PORT		GPIOB
 #define GREEN1_PORT 	GPIOB
-#define RED2_PORT		GPIOB
-#define GREEN2_PORT		GPIOB
-#define RED3_PORT		GPIOA
-#define GREEN3_PORT		GPIOA
+#define RED3_PORT		GPIOB
+#define GREEN3_PORT		GPIOB
+#define RED2_PORT		GPIOA
+#define GREEN2_PORT		GPIOA
 
 #define RED1 			GPIO_Pin_0
 #define GREEN1   		GPIO_Pin_1
-#define RED2 			GPIO_Pin_3
-#define GREEN2 			GPIO_Pin_4
-#define RED3 			GPIO_Pin_6
-#define GREEN3 			GPIO_Pin_7
+#define RED3 			GPIO_Pin_3
+#define GREEN3 			GPIO_Pin_4
+#define RED2 			GPIO_Pin_6
+#define GREEN2 			GPIO_Pin_7
 #define LED_ON			Bit_RESET
 #define LED_OFF			Bit_SET
 

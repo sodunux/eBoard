@@ -180,29 +180,13 @@ static void App_Task_A(void *p_arg)
 {
 	u8 ledstate;
 	(void)p_arg;
+//	SC_Init(USART2);
 	while(1)
 	{
-		if(ledstate)
-		{
-			LEDShow(GREEN1_PORT,GREEN1,LED_ON);
-			LEDShow(GREEN2_PORT,GREEN2,LED_ON);
-			LEDShow(GREEN3_PORT,GREEN3,LED_ON);
-			LEDShow(RED1_PORT,RED1,LED_ON);
-			LEDShow(RED2_PORT,RED2,LED_ON);
-			LEDShow(RED3_PORT,RED3,LED_ON);		
-			ledstate=0;
-		}
-		else
-		{
-			LEDShow(GREEN1_PORT,GREEN1,LED_OFF);
-			LEDShow(GREEN2_PORT,GREEN2,LED_OFF);
-			LEDShow(GREEN3_PORT,GREEN3,LED_OFF);
-			LEDShow(RED1_PORT,RED1,LED_OFF);
-			LEDShow(RED2_PORT,RED2,LED_OFF);
-			LEDShow(RED3_PORT,RED3,LED_OFF);
-			ledstate=1;
-		}
-		OSTimeDlyHMSM(0, 0, 0, 400);
+//		SC_ColdReset(USART2);
+//		//OSSemPend(uart_receive_2, 0, &err);
+//		OSTimeDlyHMSM(0, 0, 0, 400);
+		OSTaskSuspend(OS_PRIO_SELF);
 	}
 }
 
@@ -276,10 +260,57 @@ static void App_Task_C(void *p_arg)
 
 static void App_Task_D(void *p_arg)
 {
-	(void)p_arg;
-	while(1)
+	//(void)p_arg;
+	u8 i;
+	u8 led3_state;
+	//OSTaskSuspend(OS_PRIO_SELF);
+	SC_Init(USART3);
+	for(i=0;i<5;i++)
 	{
-		OSTaskSuspend(OS_PRIO_SELF);
+		LEDShow(GREEN3_PORT,GREEN3,LED_ON);
+		LEDShow(RED3_PORT,RED3,LED_ON);
+		OSTimeDlyHMSM(0, 0, 0, 300);	
+		LEDShow(GREEN3_PORT,GREEN3,LED_OFF);
+		LEDShow(RED3_PORT,RED3,LED_OFF);
+		OSTimeDlyHMSM(0, 0, 0, 300);
+	}
+	
+	while(1)
+	{		
+		
+		do{
+			SC_ColdReset(USART3);
+			OSSemPend(uart_receive_3, 0, &err);
+			OSTimeDlyHMSM(0, 0, 0, 300);
+		}while(uartbuff_3[0]!=0x3B);
+		
+		do{
+			uartbuff_3[0] = 0x00;
+			uartbuff_3[1] = 0x01;
+			uartbuff_3[2] = 0x00;
+			uartbuff_3[3] = 0x00;
+			uartbuff_3[4] = 0x00;
+			SC_Transmit(USART3,uartbuff_3,0x05,0x02);
+			OSSemPend(uart_receive_3, 0, &err);
+			if((uartbuff_3[0]==0x90)&&(uartbuff_3[1]==0x00))
+			{
+				if(led3_state)
+				{
+					led3_state = 0;
+					LEDShow(GREEN3_PORT,GREEN3,LED_ON);
+					LEDShow(RED3_PORT,RED3,LED_OFF);
+				}
+				else
+				{
+					led3_state = 1;
+					LEDShow(GREEN3_PORT,GREEN3,LED_OFF);
+					LEDShow(RED3_PORT,RED3,LED_OFF);					
+				}
+			}
+			OSTimeDlyHMSM(0, 0, 0, 500);
+		}while((uartbuff_3[0]==0x90)&&(uartbuff_3[1]==0x00));
+		//while((uartbuff_1[0]==0x0A)||(uartbuff_1[0]==0x0B)||(uartbuff_1[0]==0x0C));
+		
 	}
 }
 /*
@@ -300,10 +331,57 @@ static void App_Task_D(void *p_arg)
 
 static void App_Task_E(void *p_arg)
 {
-	(void)p_arg;
-	while(1)
+	//(void)p_arg;
+	u8 i;
+	u8 led2_state;
+	//OSTaskSuspend(OS_PRIO_SELF);
+	SC_Init(USART2);
+	for(i=0;i<5;i++)
 	{
-		OSTaskSuspend(OS_PRIO_SELF);
+		LEDShow(GREEN2_PORT,GREEN2,LED_ON);
+		LEDShow(RED2_PORT,RED2,LED_ON);
+		OSTimeDlyHMSM(0, 0, 0, 300);	
+		LEDShow(GREEN2_PORT,GREEN2,LED_OFF);
+		LEDShow(RED2_PORT,RED2,LED_OFF);
+		OSTimeDlyHMSM(0, 0, 0, 300);
+	}
+	
+	while(1)
+	{		
+		
+		do{
+			SC_ColdReset(USART2);
+			OSSemPend(uart_receive_2, 0, &err);
+			OSTimeDlyHMSM(0, 0, 0, 500);
+		}while(uartbuff_2[0]!=0x3B);
+		
+		do{
+			uartbuff_2[0] = 0x00;
+			uartbuff_2[1] = 0x01;
+			uartbuff_2[2] = 0x00;
+			uartbuff_2[3] = 0x00;
+			uartbuff_2[4] = 0x00;
+			SC_Transmit(USART2,uartbuff_2,0x05,0x02);
+			OSSemPend(uart_receive_2, 0, &err);
+			if((uartbuff_2[0]==0x90)&&(uartbuff_2[1]==0x00))
+			{
+				if(led2_state)
+				{
+					led2_state = 0;
+					LEDShow(GREEN2_PORT,GREEN2,LED_ON);
+					LEDShow(RED2_PORT,RED2,LED_OFF);
+				}
+				else
+				{
+					led2_state = 1;
+					LEDShow(GREEN2_PORT,GREEN2,LED_OFF);
+					LEDShow(RED2_PORT,RED2,LED_OFF);					
+				}
+			}
+			OSTimeDlyHMSM(0, 0, 0, 500);
+		}while((uartbuff_2[0]==0x90)&&(uartbuff_2[1]==0x00));
+		//while((uartbuff_1[0]==0x0A)||(uartbuff_1[0]==0x0B)||(uartbuff_1[0]==0x0C));
+		
 	}
 }
 /*
@@ -324,44 +402,56 @@ static void App_Task_E(void *p_arg)
 
 static void App_Task_F(void *p_arg)
 {
-	(void)p_arg;
+	//(void)p_arg;
+	u8 i;
+	u8 led1_state;
+	//OSTaskSuspend(OS_PRIO_SELF);
 	SC_Init(USART1);
-	SC_Init(USART2);
-	SC_Init(USART3);
-	//SC_DirCmd(USART1,DIR_SEND);
-	//SC_DirCmd(USART2,DIR_SEND);
-	//SC_DirCmd(USART3,DIR_SEND);	
-	while(1)
+	for(i=0;i<5;i++)
 	{
-//		uartbuff_1[0] = 0x55;
-//		uartbuff_1[1] = 0xAA;
-//		uartbuff_1[2] = 0xFF;
-//		uartbuff_1[3] = 0x5A;
-//		uartbuff_1[4] = 0x00;
-
-//		uartbuff_2[0] = 0xAA;
-//		uartbuff_2[1] = 0xAA;
-//		uartbuff_2[2] = 0x55;
-//		uartbuff_2[3] = 0xAB;
-//		uartbuff_2[4] = 0xAC;
-//		
-//		uartbuff_3[0] = 0xA4;
-//		uartbuff_3[1] = 0xAA;
-//		uartbuff_3[2] = 0xFF;
-//		uartbuff_3[3] = 0xED;
-//		uartbuff_3[4] = 0xF1;
-//		
-//		SC_Transmit(USART1,uartbuff_1,0x01,0x00);
-//		SC_Transmit(USART2,uartbuff_2,0x01,0x00);
-//		SC_Transmit(USART3,uartbuff_3,0x01,0x00);
-
+		LEDShow(GREEN1_PORT,GREEN1,LED_ON);
+		LEDShow(RED1_PORT,RED1,LED_ON);
+		OSTimeDlyHMSM(0, 0, 0, 300);	
+		LEDShow(GREEN1_PORT,GREEN1,LED_OFF);
+		LEDShow(RED1_PORT,RED1,LED_OFF);
+		OSTimeDlyHMSM(0, 0, 0, 300);
+	}
+	
+	while(1)
+	{		
 		
-		
-		SC_ColdReset(USART2);
-		SC_ColdReset(USART3);
-		SC_ColdReset(USART1);
-		OSTimeDlyHMSM(0, 0, 0, 400);
-		//OSTaskSuspend(OS_PRIO_SELF);
+		do{
+			SC_ColdReset(USART1);
+			OSSemPend(uart_receive_1, 0, &err);
+			OSTimeDlyHMSM(0, 0, 0, 300);
+		}while(uartbuff_1[0]!=0x3B);
+		do{
+			uartbuff_1[0] = 0x00;
+			uartbuff_1[1] = 0x01;
+			uartbuff_1[2] = 0x00;
+			uartbuff_1[3] = 0x00;
+			uartbuff_1[4] = 0x00;
+			SC_Transmit(USART1,uartbuff_1,0x05,0x02);
+			OSSemPend(uart_receive_1, 0, &err);
+			if((uartbuff_1[0]==0x90)&&(uartbuff_1[1]==0x00))
+			{
+				if(led1_state)
+				{
+					led1_state = 0;
+					LEDShow(GREEN1_PORT,GREEN1,LED_ON);
+					LEDShow(RED1_PORT,RED1,LED_OFF);
+				}
+				else
+				{
+					led1_state = 1;
+					LEDShow(GREEN1_PORT,GREEN1,LED_OFF);
+					LEDShow(RED1_PORT,RED1,LED_OFF);					
+				}
+			}
+			OSTimeDlyHMSM(0, 0, 1, 0);
+		}while((uartbuff_1[0]==0x90)&&(uartbuff_1[1]==0x00));
+		//while((uartbuff_1[0]==0x0A)||(uartbuff_1[0]==0x0B)||(uartbuff_1[0]==0x0C));
+	 //OSTaskSuspend(OS_PRIO_SELF);
 	}
 }
 

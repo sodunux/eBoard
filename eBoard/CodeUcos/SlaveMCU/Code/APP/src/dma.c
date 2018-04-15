@@ -36,7 +36,7 @@ void DMA_Uart2_Rx_Config(u8 *mem_addr,u32 len)
 	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
 	DMA_InitStructure.DMA_M2M	= DMA_M2M_Disable;
 	DMA_Init(DMA1_Channel6,&DMA_InitStructure);
-	DMA_ITConfig(DMA1_Channel5,DMA_IT_TC|DMA_IT_TE,ENABLE);
+	DMA_ITConfig(DMA1_Channel6,DMA_IT_TC|DMA_IT_TE,ENABLE);
 	DMA_Cmd(DMA1_Channel6,ENABLE);
 }
 

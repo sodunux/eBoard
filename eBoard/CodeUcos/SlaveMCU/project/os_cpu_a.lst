@@ -425,11 +425,12 @@ ARM Macro Assembler    Page 7
               00000000 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=.\output\os_cpu_a.d -o.\output\os_cpu_a.o -IG:\Project\eBoard\Code
-Ucos\SlaveMCU\project\RTE -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.0.0\Device
-\Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__MICROLIB SETA 1" --prede
-fine="__UVISION_VERSION SETA 515" --predefine="STM32F10X_MD SETA 1" --list=.\os
-_cpu_a.lst ..\Code\uCOS-II_Ports\os_cpu_a.asm
+ork --depend=.\output\os_cpu_a.d -o.\output\os_cpu_a.o -IC:\Users\sodunux\Docum
+ents\Github\eBoard\eBoard\CodeUcos\SlaveMCU\project\RTE -IC:\Keil_v5\ARM\PACK\K
+eil\STM32F1xx_DFP\2.2.0 -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Ke
+il\STM32F1xx_DFP\2.2.0\Device\Include --predefine="__MICROLIB SETA 1" --predefi
+ne="__UVISION_VERSION SETA 514" --predefine="STM32F10X_MD SETA 1" --list=.\os_c
+pu_a.lst ..\Code\uCOS-II_Ports\os_cpu_a.asm
 
 
 
